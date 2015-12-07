@@ -10,11 +10,12 @@ import scala.util._
 
 object EvaluationServer extends App {
 
-  // port argument
-  val port = args(0).toInt
+  // This server
+  //   - tells client the bound port by means of standard output.
+  //   - expects client to transfer `Function0` object.
+  using(new ServerSocket(0)) { serverSocket =>
+    println(serverSocket.getLocalPort())// tells client the bound port.
 
-  // this server expects client to transfer `Function0` object.
-  using(new ServerSocket(port)) { serverSocket =>
     using(serverSocket.accept()) { socket =>
       val in = new ObjectInputStream(socket.getInputStream())
       val f0 = in.readObject().asInstanceOf[Function0[Any]]

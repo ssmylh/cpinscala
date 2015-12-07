@@ -5,6 +5,7 @@ import java.io.ObjectOutputStream
 import java.net.ConnectException
 import java.net.Socket
 import java.util.concurrent.atomic.AtomicReference
+import java.util.regex.Pattern
 
 import scala.concurrent._
 import scala.sys.process._
@@ -204,23 +205,13 @@ object Exercise3 {
   // This method's preconditions are the following:
   //   - the `scala` command is added to the `PATH` variable.
   //   - In case of executing in sbt, set `fork` setting to `true` (set fork := true ).
-  //   - Port 50000 is free.
   def spawn[T](block: => T): T = {
-    def connect(address: String, port: Int): Socket =
-      try {
-        new Socket(address, port)
-      } catch {
-        case e: ConnectException => {
-          Thread.sleep(250)
-          connect(address, port)
-        }
-      }
+    val className = EvaluationServer.getClass().getName().split((Pattern.quote("$")))(0)
+    val lines = Process(s"scala -cp ${System.getProperty("java.class.path")} $className").lineStream
+    // wait for outputting port
+    val port = lines.head.toInt
 
-    val className = "chapter3.EvaluationServer"
-    val port = 50000
-    Process(s"scala -cp ${System.getProperty("java.class.path")} $className $port").run()
-
-    val socket = connect("127.0.0.1", port)
+    val socket = new Socket("127.0.0.1", port)
     try {
       val out = new ObjectOutputStream(socket.getOutputStream())
       out.writeObject(() => block) // wrap `block` not to be evaluated.
