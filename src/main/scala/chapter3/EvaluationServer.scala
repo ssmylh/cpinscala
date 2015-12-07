@@ -20,9 +20,10 @@ object EvaluationServer extends App {
       val f0 = in.readObject().asInstanceOf[Function0[Any]]
 
       val out = new ObjectOutputStream(socket.getOutputStream())
-      Try { f0() } match {
-        case Success(v) => out.writeObject(v)
-        case Failure(e) => out.writeObject(e)
+      try {
+        out.writeObject(f0())
+      } catch {
+        case e: Throwable => out.writeObject(e)
       }
     }
   }
