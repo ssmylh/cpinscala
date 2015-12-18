@@ -1,6 +1,6 @@
 package chapter2
 
-object Exercise2 {
+object Exercise {
   // 1
   def parallel[A, B](a: => A, b: => B): (A, B) = {
     var oa: Option[A] = None

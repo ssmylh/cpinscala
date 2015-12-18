@@ -1,6 +1,6 @@
 package chapter1
 
-object Exercise1 {
+object Exercise {
   // 1
   def compose[A, B, C](g: B => C, f: A => B): A => C = a => g(f(a))
 

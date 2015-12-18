@@ -10,7 +10,7 @@ import java.util.regex.Pattern
 import scala.concurrent._
 import scala.sys.process._
 
-object Exercise3 {
+object Exercise {
   // 1
   class PiggybackContext extends ExecutionContext {
     def execute(runnable: Runnable): Unit = {

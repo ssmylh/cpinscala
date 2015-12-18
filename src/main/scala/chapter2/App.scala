@@ -1,8 +1,8 @@
 package chapter2
 
-import Exercise2._
+import Exercise._
 
-object App2 extends App {
+object App extends App {
   // 1
   val (a, b) = parallel({
     Thread.sleep(1 * 1000)

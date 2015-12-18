@@ -1,10 +1,10 @@
 package chapter3
 
-import chapter3.Exercise3._
+import Exercise._
 
-object App3 extends App {
+object App extends App {
   // 2
-  import chapter2.Exercise2._
+  import chapter2.Exercise._
   val stack = new TreiberStack[Int]
   val t1 = thread {
     for (i <- 0 until 50) {
