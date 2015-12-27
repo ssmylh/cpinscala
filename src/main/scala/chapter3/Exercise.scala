@@ -1,9 +1,11 @@
 package chapter3
 
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
-import java.net.ConnectException
-import java.net.Socket
 import java.util.concurrent.atomic.AtomicReference
 import java.util.regex.Pattern
 
@@ -203,25 +205,36 @@ object Exercise {
 
   // 8
   // This method's preconditions are the following:
-  //   - the `scala` command is added to the `PATH` variable.
-  //   - In case of executing in sbt, set `fork` setting to `true` (set fork := true ).
+  //   - In case of executing in sbt, set `fork` setting to `true` (set fork := true).
+  //
+  // If passed block which contains `System.exit`, this method throws `SecurityException`.
   def spawn[T](block: => T): T = {
-    val className = EvaluationServer.getClass().getName().split((Pattern.quote("$")))(0)
-    val lines = Process(s"scala -cp ${System.getProperty("java.class.path")} $className").lineStream
-    // wait for outputting port
-    val port = lines.head.toInt
+    val className = EvaluationApp.getClass().getName().split((Pattern.quote("$")))(0)
+    val tmp = File.createTempFile("concurrent-programming-in-scala", null)
+    tmp.deleteOnExit()
 
-    val socket = new Socket("127.0.0.1", port)
+    val out = new ObjectOutputStream(new FileOutputStream(tmp))
     try {
-      val out = new ObjectOutputStream(socket.getOutputStream())
-      out.writeObject(() => block) // wrap `block` not to be evaluated.
-      val in = new ObjectInputStream(socket.getInputStream())
+      out.writeObject(() => block)
+    } finally {
+      out.close()
+    }
+
+    val ret = Process(s"java -cp ${System.getProperty("java.class.path")} $className ${tmp.getCanonicalPath}").!
+    if (ret != 0) {
+      tmp.delete()
+      throw new RuntimeException("fails to evaluate block in a new JVM process")
+    }
+
+    val in = new ObjectInputStream(new FileInputStream(tmp))
+    try {
       in.readObject() match {
         case e: Throwable => throw e
         case x => x.asInstanceOf[T]
       }
     } finally {
-      socket.close()
+      in.close()
+      tmp.delete()
     }
   }
 }

@@ -82,14 +82,25 @@ object App extends App {
     1 + 1
   })
   assert(s1 == 2)
+
   try {
-    val s2 = spawn({
+    spawn({
       "test".toInt
     })
+    assert(false)
   } catch {
     case e: NumberFormatException => // OK
     case _: Throwable => assert(false)
   }
 
+  try {
+    spawn({
+      System.exit(0)
+    })
+    assert(false)
+  } catch {
+    case e: SecurityException => // OK
+    case _: Throwable => assert(false)
+  }
   def log(msg: String): Unit = println(s"${Thread.currentThread.getName} - $msg")
 }
