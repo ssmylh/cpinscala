@@ -17,11 +17,11 @@ object Exercise1 extends App {
     Subscription()
   }
 
-  val obs: Observable[Thread] = for {
+  val observable: Observable[Thread] = for {
     _ <- Observable.interval(0.5.seconds)
     t <- detectedThreads
   } yield t
-  obs.subscribe(t => log(t.toString))
+  observable.subscribe(t => log(t.toString))
 
   def startThread(name: String): Unit = {
     val thread = new Thread(name) {
