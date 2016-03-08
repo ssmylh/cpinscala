@@ -4,20 +4,21 @@ import rx.lang.scala._
 
 class Signal[T] {
   protected var lastEvent: Option[T] = None
-
-  protected val subject = Subject[T]()
-  subject.subscribe(t => { lastEvent = Option(t) })
-
   protected var observable: Observable[T] = _
+
   def this(observable: Observable[T]) {
     this()
-    this.observable = observable
-    observable.subscribe(subject)
+    setObservable(observable)
   }
 
   def this(observable: Observable[T], initial: T) {
     this(observable)
     lastEvent = Option(initial)
+  }
+
+  protected def setObservable(observable: Observable[T]): Unit = {
+    this.observable = observable
+    this.observable.subscribe(t => { lastEvent = Option(t) })
   }
 
   /* This method throws `NoSuchElementException` when any of events are not emitted. */
@@ -70,5 +71,5 @@ object Exercise4 extends App {
   o4.onNext(2)
   assert(sum() == 3)
   o4.onNext(3)
-  println(sum() == 6)
+  assert(sum() == 6)
 }
