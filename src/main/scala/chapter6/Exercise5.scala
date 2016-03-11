@@ -12,20 +12,20 @@ class RCell[T] extends Signal[T] {
 }
 
 object Exercise5 extends App {
-  val seconds = new RCell[Int]
-  val minutes = seconds.map(_ / 60)
-  val hours = minutes.map(_ / 60)
+  val elapsedSeconds = new RCell[Int]
+  val elapsedMinutes = elapsedSeconds.map(_ / 60)
+  val elaplsedHours = elapsedMinutes.map(_ / 60)
 
   val sec1 = 1 * 60 * 60 + 2 * 60;
-  seconds := sec1
-  assert(seconds() == sec1)
-  assert(minutes() == 60 + 2)
-  assert(hours() == 1)
+  elapsedSeconds := sec1
+  assert(elapsedSeconds() == sec1)
+  assert(elapsedMinutes() == 60 + 2)
+  assert(elaplsedHours() == 1)
 
   val sec2 = 3 * 60 * 60 + 4 * 60
-  seconds := sec2
-  assert(seconds() == sec2)
-  assert(minutes() == 3 * 60 + 4)
-  assert(hours() == 3)
+  elapsedSeconds := sec2
+  assert(elapsedSeconds() == sec2)
+  assert(elapsedMinutes() == 3 * 60 + 4)
+  assert(elaplsedHours() == 3)
 
 }
