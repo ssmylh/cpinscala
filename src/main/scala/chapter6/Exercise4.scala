@@ -34,13 +34,8 @@ class Signal[T] {
     case (_, _) => new Signal(observable.zip(that.observable))
   }
 
-  def scan[S](z: S)(f: (S, T) => S): Signal[S] = lastEvent match {
-    case Some(t) => {
-      val s = f(z, t)
-      new Signal(observable.scan(s)(f), s)
-    }
-    case _ => new Signal(observable.scan(z)(f))
-  }
+  def scan[S](z: S)(f: (S, T) => S): Signal[S] =
+    new Signal(observable.scan(z)(f))
 }
 
 object Exercise4 extends App {
@@ -76,9 +71,10 @@ object Exercise4 extends App {
   val o4 = Subject[Int]()
   val s4 = o4.toSignal
   o4.onNext(1)
-  val sum = s4.scan(0)(_ + _)
+  val sum = s4.scan(10)(_ + _)
+  assert(sum() == 10)
   o4.onNext(2)
-  assert(sum() == 3)
+  assert(sum() == 12)
   o4.onNext(3)
-  assert(sum() == 6)
+  assert(sum() == 15)
 }
