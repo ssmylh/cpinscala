@@ -21,21 +21,19 @@ class RPriorityQueue[T](implicit val ord: Ordering[T]) {
 }
 
 object Exercise7 extends App {
+  import scala.collection.mutable.ListBuffer
+
   val rqueue = new RPriorityQueue[Int]()
-  val o = rqueue.popped
-
-  var count = 1
-  o.subscribe(i => count match {
-    case 1 => assert(i == 1); count += 1
-    case 2 => assert(i == 2); count += 1
-    case 3 => assert(i == 3); count += 1
-  })
-
   rqueue.add(3)
   rqueue.add(1)
   rqueue.add(2)
 
+  val o = rqueue.popped
+  val buf = ListBuffer.empty[Int]
+  o.subscribe(buf += _)
+
   assert(rqueue.pop() == 1)
   assert(rqueue.pop() == 2)
   assert(rqueue.pop() == 3)
+  assert(buf == ListBuffer(1, 2, 3))
 }
