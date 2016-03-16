@@ -18,17 +18,17 @@ class RMap[K, V] {
 }
 
 object Exercise6 extends App {
+  import scala.collection.mutable.ListBuffer
+
   val rmap = new RMap[String, Int]()
   rmap("a") = 1
 
   val o = rmap("a")
-
-  var count = 1
-  o.subscribe(i => count match {
-    case 1 => assert(i == 2); count += 1;
-    case 2 => assert(i == 3); count += 1
-  })
+  val buf = ListBuffer.empty[Int]
+  o.subscribe(buf += _)
 
   rmap("a") = 2
   rmap("a") = 3
+
+  assert(buf == ListBuffer(2, 3), buf)
 }
