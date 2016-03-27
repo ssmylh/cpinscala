@@ -10,7 +10,8 @@ lazy val root = (project in file(".")).
       "org.scala-lang.modules" %% "scala-async" % "0.9.5",
       "com.storm-enroute" %% "scalameter" % "0.7",
       "org.scalafx" %% "scalafx" % "8.0.60-R9",
-      "io.reactivex" %% "rxscala" % "0.26.0"
+      "io.reactivex" %% "rxscala" % "0.26.0",
+      "org.scala-stm" %% "scala-stm" % "0.7"
     ),
     unmanagedSourceDirectories in Compile <<= Seq(scalaSource in Compile).join,
     unmanagedSourceDirectories in Test <<= Seq(scalaSource in Test).join
