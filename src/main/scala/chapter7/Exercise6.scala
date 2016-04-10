@@ -127,4 +127,79 @@ object Exercise6 extends App {
     buf(1) = 3
     assert(buf.toList == List(1, 3))
   }
+
+  // for concurrency of `+=`.
+  {
+    val buf = new TArrayBuffer[Int]()
+    val threads = (1 to 10).map(i => new Thread {
+      override def run(): Unit = {
+        Thread.sleep(15) // tweak not to append `i` in iteration order.
+        buf += i
+      }
+    })
+    threads.foreach(_.start())
+    threads.foreach(_.join())
+    assert(buf.length == 10)
+  }
+
+  // for concurrency of `+=:`.
+  {
+    val buf = new TArrayBuffer[Int]()
+    val threads = (1 to 10).map(i => new Thread {
+      override def run(): Unit = {
+        Thread.sleep(15)
+        i +=: buf
+      }
+    })
+    threads.foreach(_.start())
+    threads.foreach(_.join())
+    assert(buf.length == 10)
+  }
+
+  // for concurrency of `insertAll`.
+  {
+    val buf = new TArrayBuffer[Int]()
+    val threads = (1 to 10).map(i => new Thread {
+      override def run(): Unit = {
+        Thread.sleep(15)
+        buf.insertAll(0, List(i, i * 10))
+      }
+    })
+    threads.foreach(_.start())
+    threads.foreach(_.join())
+    assert(buf.length == 20)
+    (0 until 20 by 2).foreach(i => {
+      assert(buf(i + 1) == buf(i) * 10, s"${buf(i)}, ${buf(i + 1)}")
+    })
+  }
+
+  // for concurrency of `remove`.
+  {
+    val buf = new TArrayBuffer[Int]()
+    buf.insertAll(0, 1 to 10)
+    val threads = (1 to 10).map(i => new Thread {
+      override def run(): Unit = {
+        Thread.sleep(15)
+        buf.remove(0)
+      }
+    })
+    threads.foreach(_.start())
+    threads.foreach(_.join())
+    assert(buf.length == 0)
+  }
+
+  // for concurrency of `update`.
+  {
+    val buf = new TArrayBuffer[Int]()
+    buf.insertAll(0, 1 to 10)
+    val threads = (0 until 10).map(i => new Thread {
+      override def run(): Unit = {
+        Thread.sleep(15)
+        buf.update(i, i + 10)
+      }
+    })
+    threads.foreach(_.start())
+    threads.foreach(_.join())
+    assert(buf.toList == (10 until 10 + 10).toList)
+  }
 }
