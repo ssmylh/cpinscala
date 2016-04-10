@@ -53,7 +53,9 @@ class TArrayBuffer[T] extends scala.collection.mutable.Buffer[T] {
     val len = ts.length
     if (len < 0 || n > len) throw new IndexOutOfBoundsException(n.toString)
 
-    val nts = ts.filterNot(_ == ts(n))
+    val left = ts.take(n)
+    val right = ts.drop(n + 1)
+    val nts = left ++ right
     if (buf.single.compareAndSet(ts, nts))
       ts(n)
     else
@@ -101,9 +103,10 @@ object Exercise6 extends App {
   val buf5 = new TArrayBuffer[Int]()
   buf5 += 1
   buf5 += 2
+  buf5 += 1
   buf5 += 3
-  buf5.remove(1)
-  assert(buf5.toList == List(1, 3))
+  buf5.remove(2)
+  assert(buf5.toList == List(1, 2, 3))
 
   val buf6 = new TArrayBuffer[Int]()
   buf6 += 1
