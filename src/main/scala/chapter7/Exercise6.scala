@@ -36,7 +36,7 @@ class TArrayBuffer[T] extends scala.collection.mutable.Buffer[T] {
   final def insertAll(n: Int, elems: collection.Traversable[T]): Unit = {
     val ts = buf.single()
     val len = ts.length
-    if (len < 0 || n > len) throw new IndexOutOfBoundsException(n.toString)
+    if (n < 0 || n > len) throw new IndexOutOfBoundsException(n.toString)
 
     val left = ts.take(n)
     val right = ts.drop(n)
@@ -51,7 +51,7 @@ class TArrayBuffer[T] extends scala.collection.mutable.Buffer[T] {
   final def remove(n: Int): T = {
     val ts = buf.single()
     val len = ts.length
-    if (len < 0 || n > len) throw new IndexOutOfBoundsException(n.toString)
+    if (n < 0 || n >= len) throw new IndexOutOfBoundsException(n.toString)
 
     val left = ts.take(n)
     val right = ts.drop(n + 1)
@@ -66,7 +66,7 @@ class TArrayBuffer[T] extends scala.collection.mutable.Buffer[T] {
   final def update(n: Int, newelem: T): Unit = {
     val ts = buf.single()
     val len = ts.length
-    if (len < 0 || n > len) throw new IndexOutOfBoundsException(n.toString)
+    if (n < 0 || n >= len) throw new IndexOutOfBoundsException(n.toString)
 
     val nts = ts.updated(n, newelem)
     if (!buf.single.compareAndSet(ts, nts))
@@ -101,12 +101,24 @@ object Exercise6 extends App {
   }
 
   {
-    val buf = new TArrayBuffer[Int]()
-    buf += 1
-    buf += 5
-    buf.insertAll(1, List(2, 3, 4))
-    assert(buf.toList == List(1, 2, 3, 4, 5))
-    assert(buf.length == 5)
+    // insert into the index 0.
+    val buf1 = new TArrayBuffer[Int]()
+    buf1 += 2
+    buf1.insertAll(0, List(1))
+    assert(buf1.toList == List(1, 2))
+
+    // insert into the index `length`.
+    val buf2 = new TArrayBuffer[Int]()
+    buf2 += 1
+    buf2.insertAll(1, List(2))
+    assert(buf2.toList == List(1, 2))
+
+    // insert into any index (0 < n < `length`).
+    val buf3 = new TArrayBuffer[Int]()
+    buf3 += 1
+    buf3 += 5
+    buf3.insertAll(1, List(2, 3, 4))
+    assert(buf3.toList == List(1, 2, 3, 4, 5))
   }
 
   {
