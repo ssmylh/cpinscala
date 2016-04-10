@@ -77,42 +77,54 @@ class TArrayBuffer[T] extends scala.collection.mutable.Buffer[T] {
 }
 
 object Exercise6 extends App {
-  val buf1 = new TArrayBuffer[Int]()
-  buf1 += 1
-  buf1 += 2
-  assert(buf1.toList == List(1, 2))
+  {
+    val buf = new TArrayBuffer[Int]()
+    buf += 1
+    buf += 2
+    assert(buf.toList == List(1, 2))
+  }
 
-  val buf2 = new TArrayBuffer[Int]()
-  1 +=: buf2
-  0 +=: buf2
-  assert(buf2.toList == List(0, 1))
-  assert(buf2(0) == 0)
+  {
+    val buf = new TArrayBuffer[Int]()
+    1 +=: buf
+    0 +=: buf
+    assert(buf.toList == List(0, 1))
+    assert(buf(0) == 0)
+  }
 
-  val buf3 = new TArrayBuffer[Int]()
-  buf3 += 1
-  buf3 += 2
-  buf3.clear()
-  assert(buf3.toList == Nil)
+  {
+    val buf = new TArrayBuffer[Int]()
+    buf += 1
+    buf += 2
+    buf.clear()
+    assert(buf.toList == Nil)
+  }
 
-  val buf4 = new TArrayBuffer[Int]()
-  buf4 += 1
-  buf4 += 5
-  buf4.insertAll(1, List(2, 3, 4))
-  assert(buf4.toList == List(1, 2, 3, 4, 5))
-  assert(buf4.length == 5)
+  {
+    val buf = new TArrayBuffer[Int]()
+    buf += 1
+    buf += 5
+    buf.insertAll(1, List(2, 3, 4))
+    assert(buf.toList == List(1, 2, 3, 4, 5))
+    assert(buf.length == 5)
+  }
 
-  val buf5 = new TArrayBuffer[Int]()
-  buf5 += 1
-  buf5 += 2
-  buf5 += 1
-  buf5 += 3
-  val removed = buf5.remove(2)
-  assert(removed == 1)
-  assert(buf5.toList == List(1, 2, 3))
+  {
+    val buf = new TArrayBuffer[Int]()
+    buf += 1
+    buf += 2
+    buf += 1
+    buf += 3
+    val removed = buf.remove(2)
+    assert(removed == 1)
+    assert(buf.toList == List(1, 2, 3))
+  }
 
-  val buf6 = new TArrayBuffer[Int]()
-  buf6 += 1
-  buf6 += 2
-  buf6(1) = 3
-  assert(buf6.toList == List(1, 3))
+  {
+    val buf = new TArrayBuffer[Int]()
+    buf += 1
+    buf += 2
+    buf(1) = 3
+    assert(buf.toList == List(1, 3))
+  }
 }
