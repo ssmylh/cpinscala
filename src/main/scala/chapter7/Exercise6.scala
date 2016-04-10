@@ -99,13 +99,15 @@ object Exercise6 extends App {
   buf4 += 5
   buf4.insertAll(1, List(2, 3, 4))
   assert(buf4.toList == List(1, 2, 3, 4, 5))
+  assert(buf4.length == 5)
 
   val buf5 = new TArrayBuffer[Int]()
   buf5 += 1
   buf5 += 2
   buf5 += 1
   buf5 += 3
-  buf5.remove(2)
+  val removed = buf5.remove(2)
+  assert(removed == 1)
   assert(buf5.toList == List(1, 2, 3))
 
   val buf6 = new TArrayBuffer[Int]()
